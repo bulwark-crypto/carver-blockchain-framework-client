@@ -30,9 +30,29 @@ interface BlocksWidget extends Widget {
   blocks: number;
 }
 
+const commonLanguage = {
+  commands: {
+    Connect: 'CONNECT',
+
+    Widgets: {
+      Add: 'WIDGETS:ADD',
+      Remove: 'WIDGETS:REMOVE',
+      Emit: 'WIDGETS:EMIT'
+    },
+  },
+  events: {
+    Widgets: {
+      Initialized: 'INITIALIZED', // This event is called by all widgets and contain their initial state
+
+      Emitted: 'WIDGETS:EMITTED',
+      Removed: 'WIDGETS:REMOVED',
+    }
+  }
+}
+
 const withWidgetEvent = (state: any, { type, id, payload }: EventWithId) => {
   switch (type) {
-    case 'INITIALIZED':
+    case commonLanguage.events.Widgets.Initialized:
       // When widgets are initialized they're added to the state widgets with the provided payload
       return {
         ...state,
@@ -48,9 +68,9 @@ const reducer: Reducer = (state, event) => {
   const { type, payload } = event;
 
   switch (type) {
-    case 'WIDGET:EMITTED':
+    case commonLanguage.events.Widgets.Emitted:
       return withWidgetEvent(state, payload as EventWithId);
-    case 'WIDGET:REMOVED':
+    case commonLanguage.events.Widgets.Removed:
       const { id } = payload; // id of widget to remove
       return {
         ...state,
@@ -97,7 +117,8 @@ const App: React.FC = () => {
         addLog(`Socket connection established successfuly. Welcome to Carver Blockchain Framework!`);
 
         addLog(`Initializing session...`);
-        socket.emit('emit', { type: 'CONNECTED' })
+        alert('connect');
+        socket.emit('emit', { type: commonLanguage.commands.Connect })
       });
       socket.on('emit', (data: any) => {
         dispatch(data)
@@ -106,12 +127,12 @@ const App: React.FC = () => {
       });
 
 
-      socket.on('WIDGET:EMITTED', (payload: any) => {
-        dispatch({ type: 'WIDGET:EMITTED', payload })
+      socket.on(commonLanguage.events.Widgets.Emitted, (payload: any) => {
+        dispatch({ type: commonLanguage.events.Widgets.Emitted, payload })
         addLog(`Widget Event: ${JSON.stringify(payload)}`);
       });
-      socket.on('WIDGET:REMOVED', (payload: any) => {
-        dispatch({ type: 'WIDGET:REMOVED', payload })
+      socket.on(commonLanguage.events.Widgets.Removed, (payload: any) => {
+        dispatch({ type: commonLanguage.events.Widgets.Removed, payload })
         addLog(`Widget Removed: ${JSON.stringify(payload)}`);
       });
 
@@ -136,10 +157,12 @@ const App: React.FC = () => {
   }
 
   const addWidget = () => {
-    emit('WIDGETS:ADD', { variant: 'blocks' });
+    emit(commonLanguage.commands.Widgets.Add, {
+      variant: 'blocks'
+    });
   }
   const removeWidget = (id: number) => {
-    emit('WIDGETS:REMOVE', { id });
+    emit(commonLanguage.commands.Widgets.Remove, { id });
   }
 
   useEffect(() => {
