@@ -7,18 +7,15 @@ import axios from 'axios'
 import { config } from './config'
 import { TextField, Box, Paper } from '@material-ui/core';
 
-
 const initialState = {
   emit: [],
   widgets: []
 }
 
 interface Event {
+  id: number;
   type: string;
   payload: any;
-}
-interface EventWithId extends Event {
-  id: number;
 }
 type Reducer = (state: any, event: Event) => any;
 
@@ -42,7 +39,7 @@ const commonLanguage = {
   },
   events: {
     Widgets: {
-      Initialized: 'INITIALIZED', // This event is called by all widgets and contain their initial state
+      Initialized: 'INTIALIZED', // This event is called by all widgets and contain their initial state
 
       Emitted: 'WIDGETS:EMITTED',
       Removed: 'WIDGETS:REMOVED',
@@ -50,7 +47,9 @@ const commonLanguage = {
   }
 }
 
-const withWidgetEvent = (state: any, { type, id, payload }: EventWithId) => {
+const withWidgetEvent = (state: any, event: Event) => {
+  const { type, id, payload } = event;
+
   switch (type) {
     case commonLanguage.events.Widgets.Initialized:
       // When widgets are initialized they're added to the state widgets with the provided payload
@@ -69,7 +68,7 @@ const reducer: Reducer = (state, event) => {
 
   switch (type) {
     case commonLanguage.events.Widgets.Emitted:
-      return withWidgetEvent(state, payload as EventWithId);
+      return withWidgetEvent(state, payload);
     case commonLanguage.events.Widgets.Removed:
       const { id } = payload; // id of widget to remove
       return {
@@ -117,28 +116,18 @@ const App: React.FC = () => {
         addLog(`Socket connection established successfuly. Welcome to Carver Blockchain Framework!`);
 
         addLog(`Initializing session...`);
-        alert('connect');
-        socket.emit('emit', { type: commonLanguage.commands.Connect })
+        socket.emit('emit', {
+          type: commonLanguage.commands.Connect
+        })
       });
-      socket.on('emit', (data: any) => {
-        dispatch(data)
-
-        addLog(`Event: ${JSON.stringify(data)}`);
-      });
-
-
-      socket.on(commonLanguage.events.Widgets.Emitted, (payload: any) => {
-        dispatch({ type: commonLanguage.events.Widgets.Emitted, payload })
-        addLog(`Widget Event: ${JSON.stringify(payload)}`);
-      });
-      socket.on(commonLanguage.events.Widgets.Removed, (payload: any) => {
-        dispatch({ type: commonLanguage.events.Widgets.Removed, payload })
-        addLog(`Widget Removed: ${JSON.stringify(payload)}`);
-      });
-
-
       socket.on('disconnect', () => {
         addLog(`Socket disconnected...`);
+      });
+
+
+      socket.on('emit', (event: any) => {
+        dispatch(event);
+        addLog(`Event: ${JSON.stringify(event)}`);
       });
     } catch (err) {
       // @todo Proper error handling. World's greatest error handling right here.
