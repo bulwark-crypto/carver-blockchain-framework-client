@@ -5,7 +5,18 @@ import Button from '@material-ui/core/Button';
 import io from 'socket.io-client';
 import axios from 'axios'
 import { config } from './config'
-import { TextField, Box, Paper } from '@material-ui/core';
+import { TextField, Box, Paper, Grid } from '@material-ui/core';
+
+const widgetTypes = [
+  {
+    variant: 'blocks',
+    title: 'Blocks',
+  },
+  {
+    variant: 'rpcGetInfo',
+    title: 'Network Info',
+  },
+]
 
 const initialState = {
   emit: [],
@@ -19,12 +30,12 @@ interface Event {
 }
 type Reducer = (state: any, event: Event) => any;
 
-interface Widget {
-  id: number;
+interface WidgetConfiguration {
   variant: string;
 }
-interface BlocksWidget extends Widget {
-  blocks: number;
+interface Widget {
+  id: number;
+  configuration: WidgetConfiguration;
 }
 
 const commonLanguage = {
@@ -62,7 +73,9 @@ const withWidgetEvent = (state: any, event: Event) => {
       }
   }
   return state
+
 }
+
 const reducer: Reducer = (state, event) => {
   const { type, payload } = event;
 
@@ -145,9 +158,9 @@ const App: React.FC = () => {
     socket.emit('emit', { type, payload })
   }
 
-  const addWidget = () => {
+  const addWidget = (variant: string) => {
     emit(commonLanguage.commands.Widgets.Add, {
-      variant: 'blocks'
+      variant
     });
   }
   const removeWidget = (id: number) => {
@@ -160,16 +173,32 @@ const App: React.FC = () => {
   }, [])
 
   const getWidgets = () => {
-    console.log(state.widgets);
-    return state.widgets.map((widget: BlocksWidget) => {
-      console.log(widget);
+
+    const getWidgetDetails = (widget: Widget) => {
+      const keys = Object.entries(widget);
+
+      return keys.map(([key, value]) => {
+        if (key === 'configuration') { return null; }
+
+        return <Box>
+          <Box display="inline" fontWeight="fontWeightBold">{key}</Box>: {value}
+        </Box>
+      });
+    }
+    return state.widgets.map((widget: Widget) => {
+      console.log('***widget:', widget);
+
+
+
+
       return (
         <Paper>
           <Box p={1} m={1}>
             <Button variant="contained" onClick={() => removeWidget(widget.id)}>
               Remove
             </Button>
-            (Widget ID: {widget.id}) Blocks:{widget.blocks}
+
+            {getWidgetDetails(widget)}
           </Box>
         </Paper >)
     });
@@ -177,10 +206,22 @@ const App: React.FC = () => {
 
   return (
     <Box p={2}>
+      {/*@todo convert these buttons to dropdown menu*/}
       <Box mb={3}>
-        <Button variant="contained" onClick={addWidget}>
-          Add Widget
-      </Button>
+        <Grid container>
+          <Grid item>
+            <Button variant="contained" onClick={() => addWidget('blocks')}>
+              Add Blocks Widget
+            </Button>
+          </Grid>
+          <Grid item>
+            <Box mx={3}>
+              <Button variant="contained" onClick={() => addWidget('networkInfo')}>
+                Add Network Info Widget
+          </Button>
+            </Box>
+          </Grid>
+        </Grid>
       </Box>
       {getWidgets()}
       <TextField
