@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button';
 import io from 'socket.io-client';
 import axios from 'axios'
 import { config } from './config'
-import { TextField, Box, Paper, Grid } from '@material-ui/core';
+import { TextField, Box, Paper, Grid, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
 
 const widgetTypes = [
   {
@@ -32,10 +32,12 @@ type Reducer = (state: any, event: Event) => any;
 
 interface WidgetConfiguration {
   variant: string;
+  display: string;
 }
 interface Widget {
   id: number;
   configuration: WidgetConfiguration;
+  data: any;
 }
 
 const commonLanguage = {
@@ -174,17 +176,63 @@ const App: React.FC = () => {
 
   const getWidgets = () => {
 
-    const getWidgetDetails = (widget: Widget) => {
-      const keys = Object.entries(widget);
+    const getTableDisplay = (widget: Widget) => {
+      const rows = widget.data;
+
+      const tableRows = rows.map((row: any) => (
+        <TableRow key={row.id}>
+          <TableCell component="th" scope="row">
+            {row.height}
+          </TableCell>
+          <TableCell align="right">{row.date}</TableCell>
+          <TableCell align="right">{row.hash}</TableCell>
+          <TableCell align="right">{row.txsCount}</TableCell>
+          <TableCell align="right">{row.moneysupply}</TableCell>
+        </TableRow>
+      ));
+
+      return <Box>
+        <TableContainer component={Paper}>
+          <Table aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Block #</TableCell>
+                <TableCell align="right">Date</TableCell>
+                <TableCell align="right">Hash</TableCell>
+                <TableCell align="right">Txs</TableCell>
+                <TableCell align="right">Supply</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {tableRows}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    }
+
+    const getKeyValueDisplay = (widget: Widget) => {
+      const keys = Object.entries(widget.data);
 
       return keys.map(([key, value]) => {
-        if (key === 'configuration') { return null; }
-
         return <Box>
           <Box display="inline" fontWeight="fontWeightBold">{key}</Box>: {value}
         </Box>
       });
     }
+
+    const getWidgetDetails = (widget: Widget) => {
+
+      switch (widget.configuration.display) {
+        case 'table':
+          return getTableDisplay(widget)
+        case 'keyValue':
+          return getKeyValueDisplay(widget)
+
+      }
+
+    }
+
     return state.widgets.map((widget: Widget) => {
       console.log('***widget:', widget);
 
