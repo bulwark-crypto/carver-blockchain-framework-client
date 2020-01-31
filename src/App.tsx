@@ -5,7 +5,8 @@ import Button from '@material-ui/core/Button';
 import io from 'socket.io-client';
 import axios from 'axios'
 import { config } from './config'
-import { TextField, Box, Paper, Grid, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@material-ui/core';
+import { TextField, Box, Paper, Grid, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TableFooter, TablePagination } from '@material-ui/core';
+import TablePaginationActions from '@material-ui/core/TablePagination/TablePaginationActions';
 
 const widgetTypes = [
   {
@@ -47,7 +48,8 @@ const commonLanguage = {
     Widgets: {
       Add: 'WIDGETS:ADD',
       Remove: 'WIDGETS:REMOVE',
-      Emit: 'WIDGETS:EMIT'
+      Emit: 'WIDGETS:EMIT',
+      Command: 'WIDGETS:COMMAND',
     },
   },
   events: {
@@ -177,7 +179,22 @@ const App: React.FC = () => {
   const getWidgets = () => {
 
     const getTableDisplay = (widget: Widget) => {
+      const { id } = widget;
       const rows = widget.data;
+
+      const onChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, page: number) => {
+        emit(commonLanguage.commands.Widgets.Command, {
+          id,
+          type: 'UPDATE_PAGE', //@todo move to blocks commonLanguage
+          payload: {
+            page
+          }
+        })
+      }
+
+      const onChangeRowsPerPage: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> = (event) => {
+        console.log('rows per page:', event.target.value);
+      }
 
       const tableRows = rows.map((row: any) => (
         <TableRow key={row.id}>
@@ -192,8 +209,8 @@ const App: React.FC = () => {
       ));
 
       return <Box>
-        <TableContainer component={Paper}>
-          <Table aria-label="simple table">
+        <TableContainer>
+          <Table aria-label="simple table" size={'small'}>
             <TableHead>
               <TableRow>
                 <TableCell>Block #</TableCell>
@@ -206,6 +223,24 @@ const App: React.FC = () => {
             <TableBody>
               {tableRows}
             </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                  count={25}
+                  rowsPerPage={5}
+                  page={1}
+                  SelectProps={{
+                    inputProps: { 'aria-label': 'rows per page' },
+                    native: true,
+                  }}
+
+                  onChangePage={onChangePage}
+                  onChangeRowsPerPage={onChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              </TableRow>
+            </TableFooter>
           </Table>
         </TableContainer>
       </Box>
