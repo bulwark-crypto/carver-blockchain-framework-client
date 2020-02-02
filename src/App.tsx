@@ -1,101 +1,14 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Button from '@material-ui/core/Button';
 import io from 'socket.io-client';
 import axios from 'axios'
 import { config } from './config'
-import { TextField, Box, Paper, Grid, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TableFooter, TablePagination } from '@material-ui/core';
-import TablePaginationActions from '@material-ui/core/TablePagination/TablePaginationActions';
+import { TextField, Box, Paper, Grid } from '@material-ui/core';
 
-const widgetTypes = [
-  {
-    variant: 'blocks',
-    title: 'Blocks',
-  },
-  {
-    variant: 'rpcGetInfo',
-    title: 'Network Info',
-  },
-]
+import { reducer, initialState, commonLanguage } from './core/contexts/carverUser/context'
+import { Widget } from './core/interfaces';
 
-const initialState = {
-  emit: [],
-  widgets: []
-}
-
-interface Event {
-  id: number;
-  type: string;
-  payload: any;
-}
-type Reducer = (state: any, event: Event) => any;
-
-interface WidgetConfiguration {
-  variant: string;
-  display: string;
-}
-interface Widget {
-  id: number;
-  configuration: WidgetConfiguration;
-  data: any;
-}
-
-const commonLanguage = {
-  commands: {
-    Connect: 'CONNECT',
-
-    Widgets: {
-      Add: 'WIDGETS:ADD',
-      Remove: 'WIDGETS:REMOVE',
-      Emit: 'WIDGETS:EMIT',
-      Command: 'WIDGETS:COMMAND',
-    },
-  },
-  events: {
-    Widgets: {
-      Initialized: 'INTIALIZED', // This event is called by all widgets and contain their initial state
-
-      Emitted: 'WIDGETS:EMITTED',
-      Removed: 'WIDGETS:REMOVED',
-    }
-  }
-}
-
-const withWidgetEvent = (state: any, event: Event) => {
-  const { type, id, payload } = event;
-
-  switch (type) {
-    case commonLanguage.events.Widgets.Initialized:
-      // When widgets are initialized they're added to the state widgets with the provided payload
-      return {
-        ...state,
-        widgets: [
-          ...state.widgets,
-          { id, ...payload }
-        ]
-      }
-  }
-  return state
-
-}
-
-const reducer: Reducer = (state, event) => {
-  const { type, payload } = event;
-
-  switch (type) {
-    case commonLanguage.events.Widgets.Emitted:
-      return withWidgetEvent(state, payload);
-    case commonLanguage.events.Widgets.Removed:
-      const { id } = payload; // id of widget to remove
-      return {
-        ...state,
-        widgets: state.widgets.filter((widget: any) => widget.id !== id)
-      }
-
-  }
-  return state
-}
 
 const App: React.FC = () => {
   const [logs, setLog] = useState('');
@@ -129,7 +42,7 @@ const App: React.FC = () => {
       });
       setSocket(socket);
 
-      socket.on('connect', (test: any) => {
+      socket.on('connect', () => {
         addLog(`Socket connection established successfuly. Welcome to Carver Blockchain Framework!`);
 
         addLog(`Initializing session...`);
@@ -178,73 +91,6 @@ const App: React.FC = () => {
 
   const getWidgets = () => {
 
-    const getTableDisplay = (widget: Widget) => {
-      const { id } = widget;
-      const rows = widget.data;
-
-      const onChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, page: number) => {
-        emit(commonLanguage.commands.Widgets.Command, {
-          id,
-          type: 'UPDATE_PAGE', //@todo move to blocks commonLanguage
-          payload: {
-            page
-          }
-        })
-      }
-
-      const onChangeRowsPerPage: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> = (event) => {
-        console.log('rows per page:', event.target.value);
-      }
-
-      const tableRows = rows.map((row: any) => (
-        <TableRow key={row.id}>
-          <TableCell component="th" scope="row">
-            {row.height}
-          </TableCell>
-          <TableCell align="right">{row.date}</TableCell>
-          <TableCell align="right">{row.hash}</TableCell>
-          <TableCell align="right">{row.txsCount}</TableCell>
-          <TableCell align="right">{row.moneysupply}</TableCell>
-        </TableRow>
-      ));
-
-      return <Box>
-        <TableContainer>
-          <Table aria-label="simple table" size={'small'}>
-            <TableHead>
-              <TableRow>
-                <TableCell>Block #</TableCell>
-                <TableCell align="right">Date</TableCell>
-                <TableCell align="right">Hash</TableCell>
-                <TableCell align="right">Txs</TableCell>
-                <TableCell align="right">Supply</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tableRows}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                  count={25}
-                  rowsPerPage={5}
-                  page={1}
-                  SelectProps={{
-                    inputProps: { 'aria-label': 'rows per page' },
-                    native: true,
-                  }}
-
-                  onChangePage={onChangePage}
-                  onChangeRowsPerPage={onChangeRowsPerPage}
-                  ActionsComponent={TablePaginationActions}
-                />
-              </TableRow>
-            </TableFooter>
-          </Table>
-        </TableContainer>
-      </Box>
-    }
 
     const getKeyValueDisplay = (widget: Widget) => {
       const keys = Object.entries(widget.data);
@@ -260,7 +106,7 @@ const App: React.FC = () => {
 
       switch (widget.configuration.display) {
         case 'table':
-          return getTableDisplay(widget)
+          return null;// getTableDisplay(widget)
         case 'keyValue':
           return getKeyValueDisplay(widget)
 
