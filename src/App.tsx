@@ -9,6 +9,7 @@ import { TextField, Box, Paper, Grid } from '@material-ui/core';
 import { reducer, initialState, commonLanguage } from './core/contexts/carverUser/context'
 import { Widget } from './core/interfaces';
 
+import { widgetConfigurations } from './widgets/configurations'
 
 const App: React.FC = () => {
   const [logs, setLog] = useState('');
@@ -92,6 +93,7 @@ const App: React.FC = () => {
   const getWidgets = () => {
 
 
+    //@todo move to widgets/display/keyValue
     const getKeyValueDisplay = (widget: Widget) => {
       const keys = Object.entries(widget.data);
 
@@ -104,22 +106,24 @@ const App: React.FC = () => {
 
     const getWidgetDetails = (widget: Widget) => {
 
-      switch (widget.configuration.display) {
-        case 'table':
-          return null;// getTableDisplay(widget)
-        case 'keyValue':
-          return getKeyValueDisplay(widget)
+      const matchingConfiguration = widgetConfigurations.find(widgetConfiguration => widgetConfiguration.variant === widget.configuration.variant);
+      if (!matchingConfiguration) {
+        addLog(`Unable to find widget configuration ${widget.configuration.variant}`);
 
+        return null;
       }
 
+      const matchingDisplay = matchingConfiguration.displays.find(widgetDisplay => widgetDisplay.display === widget.configuration.display);
+      if (!matchingDisplay) {
+        addLog(`Unable to find widget display ${widget.configuration.display} for variant ${widget.configuration.variant}`);
+
+        return null;
+      }
+
+      return <matchingDisplay.Element widget={widget} emit={emit} />;
     }
 
     return state.widgets.map((widget: Widget) => {
-      console.log('***widget:', widget);
-
-
-
-
       return (
         <Paper>
           <Box p={1} m={1}>

@@ -5,13 +5,19 @@ const widgetConfigurations = [
     {
         variant: 'blocks',
         title: 'Blocks',
-        element: WidgetTableDisplay
+
+        displays: [
+            {
+                display: 'table',
+                Element: WidgetTableDisplay
+            }
+        ]
     },
-    {
-        variant: 'rpcGetInfo',
-        title: 'Network Info',
-    },
+    /* {
+         variant: 'rpcGetInfo',
+         title: 'Network Info',
+     },*/
 ]
 
 
-export default widgetConfigurations
+export { widgetConfigurations }
