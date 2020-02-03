@@ -2,23 +2,38 @@ import React, { useState, useEffect, useReducer } from 'react';
 import { TableCell, Box, TableContainer, TableHead, TablePagination, TableRow, Table, TableBody, TableFooter } from '@material-ui/core';
 import TablePaginationActions from '@material-ui/core/TablePagination/TablePaginationActions';
 
-import { commonLanguage } from '../../core/contexts/carverUser/context'
+import { commonLanguage as carverUserCommonLanguage } from '../../core/contexts/carverUser/context'
 import { Widget } from '../../core/interfaces';
 
-
+interface PageQuery {
+    page: number;
+    limit: number;
+}
+interface WidgetWithTableDisplay extends Widget {
+    page: number;
+    count: number; // Total number of records
+    pageQuery: PageQuery;
+    rows: any[];
+}
 interface Props {
     emit: (type: string, payload: any) => void;
-    widget: Widget;
+    widget: WidgetWithTableDisplay;
+}
+const commonLanguage = {
+    commands: {
+        UpdatePage: 'UPDATE_PAGE',
+        UpdateLimit: 'UPDATE_LIMIT'
+    }
 }
 const WidgetTableDisplay: React.FC<Props> = ({ emit, widget }) => {
 
-    const { id } = widget;
-    const rows = widget.data;
+
+    const { id, rows } = widget;
 
     const onChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, page: number) => {
-        emit(commonLanguage.commands.Widgets.Command, {
+        emit(carverUserCommonLanguage.commands.Widgets.Command, {
             id,
-            type: 'UPDATE_PAGE', //@todo move to blocks commonLanguage
+            type: commonLanguage.commands.UpdatePage,
             payload: {
                 page
             }
@@ -26,7 +41,14 @@ const WidgetTableDisplay: React.FC<Props> = ({ emit, widget }) => {
     }
 
     const onChangeRowsPerPage: React.ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> = (event) => {
-        console.log('rows per page:', event.target.value);
+        const limit = event.target.value
+        emit(carverUserCommonLanguage.commands.Widgets.Command, {
+            id,
+            type: commonLanguage.commands.UpdateLimit,
+            payload: {
+                limit
+            }
+        })
     }
 
     const tableRows = rows.map((row: any) => (
@@ -60,9 +82,9 @@ const WidgetTableDisplay: React.FC<Props> = ({ emit, widget }) => {
                     <TableRow>
                         <TablePagination
                             rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                            count={25}
-                            rowsPerPage={5}
-                            page={1}
+                            count={widget.count}
+                            rowsPerPage={widget.pageQuery.limit}
+                            page={widget.pageQuery.page}
                             SelectProps={{
                                 inputProps: { 'aria-label': 'rows per page' },
                                 native: false,

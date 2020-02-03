@@ -94,7 +94,7 @@ const App: React.FC = () => {
 
 
     //@todo move to widgets/display/keyValue
-    const getKeyValueDisplay = (widget: Widget) => {
+    /*const getKeyValueDisplay = (widget: Widget) => {
       const keys = Object.entries(widget.data);
 
       return keys.map(([key, value]) => {
@@ -102,7 +102,7 @@ const App: React.FC = () => {
           <Box display="inline" fontWeight="fontWeightBold">{key}</Box>: {value}
         </Box>
       });
-    }
+    }*/
 
     const getWidgetDetails = (widget: Widget) => {
 
@@ -120,12 +120,12 @@ const App: React.FC = () => {
         return null;
       }
 
-      return <matchingDisplay.Element widget={widget} emit={emit} />;
+      return <matchingDisplay.Element widget={widget as any} emit={emit} />;
     }
 
     return state.widgets.map((widget: Widget) => {
       return (
-        <Paper>
+        <Paper key={widget.id}>
           <Box p={1} m={1}>
             <Button variant="contained" onClick={() => removeWidget(widget.id)}>
               Remove

@@ -13,5 +13,4 @@ export interface WidgetConfiguration {
 export interface Widget {
     id: number;
     configuration: WidgetConfiguration;
-    data: any;
 }
