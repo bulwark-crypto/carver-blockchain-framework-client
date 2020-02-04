@@ -149,7 +149,7 @@ const App: React.FC = () => {
           </Grid>
           <Grid item>
             <Box mx={3}>
-              <Button variant="contained" onClick={() => addWidget('networkInfo')}>
+              <Button variant="contained" onClick={() => addWidget('txs')}>
                 Add Network Info Widget
           </Button>
             </Box>

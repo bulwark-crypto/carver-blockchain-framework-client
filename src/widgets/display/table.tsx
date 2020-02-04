@@ -29,6 +29,7 @@ const WidgetTableDisplay: React.FC<Props> = ({ emit, widget }) => {
 
 
     const { id, rows } = widget;
+    const { variant } = widget.configuration;
 
     const onChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, page: number) => {
         emit(carverUserCommonLanguage.commands.Widgets.Command, {
@@ -51,8 +52,18 @@ const WidgetTableDisplay: React.FC<Props> = ({ emit, widget }) => {
         })
     }
 
-    const tableRows = rows.map((row: any) => (
-        <TableRow key={row.id}>
+    const tableRows = rows.map((row: any) => {
+        //@todo this is just tempoary until we go through each key to display
+        if (variant === 'txs') {
+            return (<TableRow key={row.id}>
+                <TableCell component="th" scope="row">
+                    {row.height}
+                </TableCell>
+                <TableCell align="right">{row.txid}</TableCell>
+            </TableRow>)
+
+        }
+        return (<TableRow key={row.id}>
             <TableCell component="th" scope="row">
                 {row.height}
             </TableCell>
@@ -60,20 +71,31 @@ const WidgetTableDisplay: React.FC<Props> = ({ emit, widget }) => {
             <TableCell align="right">{row.hash}</TableCell>
             <TableCell align="right">{row.txsCount}</TableCell>
             <TableCell align="right">{row.moneysupply}</TableCell>
-        </TableRow>
-    ));
+        </TableRow>)
+    });
+
+    const getTableHead = () => {
+        //@todo this is just tempoary until we go through each key to display
+        if (variant === 'txs') {
+            return (<TableRow>
+                <TableCell>Block #</TableCell>
+                <TableCell align="right">Transaction</TableCell>
+            </TableRow>)
+        }
+        return (<TableRow>
+            <TableCell>Block #</TableCell>
+            <TableCell align="right">Date</TableCell>
+            <TableCell align="right">Hash</TableCell>
+            <TableCell align="right">Txs</TableCell>
+            <TableCell align="right">Supply</TableCell>
+        </TableRow>)
+    }
 
     return <Box>
         <TableContainer>
             <Table aria-label="simple table" size={'small'}>
                 <TableHead>
-                    <TableRow>
-                        <TableCell>Block #</TableCell>
-                        <TableCell align="right">Date</TableCell>
-                        <TableCell align="right">Hash</TableCell>
-                        <TableCell align="right">Txs</TableCell>
-                        <TableCell align="right">Supply</TableCell>
-                    </TableRow>
+                    {getTableHead()}
                 </TableHead>
                 <TableBody>
                     {tableRows}
@@ -81,7 +103,7 @@ const WidgetTableDisplay: React.FC<Props> = ({ emit, widget }) => {
                 <TableFooter>
                     <TableRow>
                         <TablePagination
-                            rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                            rowsPerPageOptions={[5, 10, 25]}
                             count={widget.count}
                             rowsPerPage={widget.pageQuery.limit}
                             page={widget.pageQuery.page}

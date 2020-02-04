@@ -13,6 +13,17 @@ const widgetConfigurations = [
             }
         ]
     },
+    {
+        variant: 'txs',
+        title: 'Txs',
+
+        displays: [
+            {
+                display: 'table',
+                Element: WidgetTableDisplay
+            }
+        ]
+    },
     /* {
          variant: 'rpcGetInfo',
          title: 'Network Info',
