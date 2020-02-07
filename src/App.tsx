@@ -51,10 +51,16 @@ const App: React.FC = () => {
           type: commonLanguage.commands.Connect
         })
       });
+
       socket.on('disconnect', () => {
         addLog(`Socket disconnected...`);
       });
 
+
+      socket.on('STATE_SET', (event: any) => {
+        dispatch(event);
+        addLog(`Event: ${JSON.stringify(event)}`);
+      });
 
       socket.on('emit', (event: any) => {
         dispatch(event);
@@ -106,21 +112,16 @@ const App: React.FC = () => {
 
     const getWidgetDetails = (widget: Widget) => {
 
-      const matchingConfiguration = widgetConfigurations.find(widgetConfiguration => widgetConfiguration.variant === widget.configuration.variant);
-      if (!matchingConfiguration) {
+      const configuration = widgetConfigurations.find(widgetConfiguration => widgetConfiguration.variant === widget.configuration.variant);
+      if (!configuration) {
         addLog(`Unable to find widget configuration ${widget.configuration.variant}`);
 
         return null;
       }
 
-      const matchingDisplay = matchingConfiguration.displays.find(widgetDisplay => widgetDisplay.display === widget.configuration.display);
-      if (!matchingDisplay) {
-        addLog(`Unable to find widget display ${widget.configuration.display} for variant ${widget.configuration.variant}`);
+      const { element: Element } = configuration
 
-        return null;
-      }
-
-      return <matchingDisplay.Element widget={widget as any} emit={emit} />;
+      return <Element widget={widget as any} emit={emit} configuration={configuration} />;
     }
 
     return state.widgets.map((widget: Widget) => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import { TableCell, Box, TableContainer, TableHead, TablePagination, TableRow, Table, TableBody, TableFooter } from '@material-ui/core';
+import { TableCell, Box, TableContainer, TableHead, TablePagination, TableRow, Table, TableBody, TableFooter, TableSortLabel } from '@material-ui/core';
 import TablePaginationActions from '@material-ui/core/TablePagination/TablePaginationActions';
 
 import { commonLanguage as carverUserCommonLanguage } from '../../core/contexts/carverUser/context'
@@ -15,17 +15,27 @@ interface WidgetWithTableDisplay extends Widget {
     pageQuery: PageQuery;
     rows: any[];
 }
+interface Column {
+    key: string;
+    title: string;
+    sortable: boolean;
+}
 interface Props {
     emit: (type: string, payload: any) => void;
     widget: WidgetWithTableDisplay;
+    options: TableDisplayOptions;
 }
+
 const commonLanguage = {
     commands: {
         UpdatePage: 'UPDATE_PAGE',
         UpdateLimit: 'UPDATE_LIMIT'
     }
 }
-const WidgetTableDisplay: React.FC<Props> = ({ emit, widget }) => {
+export interface TableDisplayOptions {
+    columns: Column[];
+}
+const WidgetTableDisplay: React.FC<Props> = ({ emit, widget, options }) => {
 
 
     const { id, rows } = widget;
@@ -55,7 +65,7 @@ const WidgetTableDisplay: React.FC<Props> = ({ emit, widget }) => {
     const tableRows = rows.map((row: any) => {
         //@todo this is just tempoary until we go through each key to display
         if (variant === 'txs') {
-            return (<TableRow key={row.id}>
+            return (<TableRow key={row.id} hover>
                 <TableCell component="th" scope="row">
                     {row.height}
                 </TableCell>
@@ -63,7 +73,7 @@ const WidgetTableDisplay: React.FC<Props> = ({ emit, widget }) => {
             </TableRow>)
 
         }
-        return (<TableRow key={row.id}>
+        return (<TableRow key={row.id} hover>
             <TableCell component="th" scope="row">
                 {row.height}
             </TableCell>
@@ -83,7 +93,17 @@ const WidgetTableDisplay: React.FC<Props> = ({ emit, widget }) => {
             </TableRow>)
         }
         return (<TableRow>
-            <TableCell>Block #</TableCell>
+            <TableCell
+                align={true ? 'right' : 'left'}
+                padding={false ? 'none' : 'default'}
+                sortDirection={true ? 'asc' : false}>
+                <TableSortLabel
+                    active={true}
+                    direction={true ? 'asc' : 'asc'}
+                    onClick={(event) => { console.log('*****', event) }}>
+                    Block #
+                </TableSortLabel>
+            </TableCell>
             <TableCell align="right">Date</TableCell>
             <TableCell align="right">Hash</TableCell>
             <TableCell align="right">Txs</TableCell>
@@ -124,4 +144,6 @@ const WidgetTableDisplay: React.FC<Props> = ({ emit, widget }) => {
 
 }
 
-export default WidgetTableDisplay;
+export {
+    WidgetTableDisplay
+}
