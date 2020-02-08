@@ -1,6 +1,6 @@
 
 export interface Event {
-    id: number;
+    id?: number;
     type: string;
     payload: any;
 }

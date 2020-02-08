@@ -1,76 +1,46 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import './App.css';
 import Button from '@material-ui/core/Button';
-import io from 'socket.io-client';
-import axios from 'axios'
 import { config } from './config'
 import { TextField, Box, Paper, Grid } from '@material-ui/core';
 
-import { reducer, initialState, commonLanguage } from './core/contexts/carverUser/context'
+import { reducer as carverUserReducer, initialState as carverUserInitialState, commonLanguage as carverUserCommonLanguage } from './core/contexts/carverUser/context'
+import { reducer as loggerReducer, initialState as loggerInitialState, commonLanguage as loggerCommonLanguage } from './core/contexts/logger/context'
 import { Widget } from './core/interfaces';
 
 import { widgetConfigurations } from './widgets/configurations'
 
+import { initReservationService } from './core/reservations'
+
 const App: React.FC = () => {
-  const [logs, setLog] = useState('');
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [carverUserState, carverUserDispatch] = useReducer(carverUserReducer, carverUserInitialState);
+  const [loggerState, loggerDispatch] = useReducer(loggerReducer, loggerInitialState);
   const [socket, setSocket] = useState<SocketIOClient.Socket>();
 
-
-  const addLog = (log: string) => {
-    const timePrefix = new Date().toISOString()
-    setLog(logs => logs + `${timePrefix}: ${log}\n`);
+  const addLog = (...args: any) => {
+    loggerDispatch({ type: loggerCommonLanguage.commands.Add, payload: args });
   }
 
   const initConnection = async () => {
     try {
-      addLog('Reserving socket connection...');
-      const api = axios.create({
-        baseURL: config.reservations.endpoint,
-        timeout: 1000,
-        headers: { 'X-Carver-Framework-Version': config.version }
-      });
+      //@todo we don't need this initializer. We need to create contextStore and then access these contexts internally
+      //For now this is a decent shortcut until we figure out what other contexts there are on frontend
+      const reservationService = initReservationService({
+        loggerDispatch,
+        carverUserDispatch
+      })
 
-      const reservationRequest = await api.post('/users/login')
+      const reservationResponse = await reservationService.getNewReservation()
 
-      const id = reservationRequest.data.id;
-      addLog(`Connecting to socket server with reservation id: ${id}...`);
+      const socket = reservationService.getSocket(reservationResponse);
 
-      const newReservation = reservationRequest.data.reservation;
-      const { websocketEndpoint } = newReservation
-      const socket = io(websocketEndpoint, {
-        query: { id }
-      });
       setSocket(socket);
 
-      socket.on('connect', () => {
-        addLog(`Socket connection established successfuly. Welcome to Carver Blockchain Framework!`);
-
-        addLog(`Initializing session...`);
-        socket.emit('emit', {
-          type: commonLanguage.commands.Connect
-        })
-      });
-
-      socket.on('disconnect', () => {
-        addLog(`Socket disconnected...`);
-      });
-
-
-      socket.on('STATE_SET', (event: any) => {
-        dispatch(event);
-        addLog(`Event: ${JSON.stringify(event)}`);
-      });
-
-      socket.on('emit', (event: any) => {
-        dispatch(event);
-        addLog(`Event: ${JSON.stringify(event)}`);
-      });
+      reservationService.bindReservation(socket);
     } catch (err) {
       // @todo Proper error handling. World's greatest error handling right here.
       console.log(err);
-      addLog('Error connecting!');
-      alert('Error connecting!')
+      addLog(err);
     }
   }
 
@@ -83,12 +53,12 @@ const App: React.FC = () => {
   }
 
   const addWidget = (variant: string) => {
-    emit(commonLanguage.commands.Widgets.Add, {
+    emit(carverUserCommonLanguage.commands.Widgets.Add, {
       variant
     });
   }
   const removeWidget = (id: number) => {
-    emit(commonLanguage.commands.Widgets.Remove, { id });
+    emit(carverUserCommonLanguage.commands.Widgets.Remove, { id });
   }
 
   useEffect(() => {
@@ -97,18 +67,6 @@ const App: React.FC = () => {
   }, [])
 
   const getWidgets = () => {
-
-
-    //@todo move to widgets/display/keyValue
-    /*const getKeyValueDisplay = (widget: Widget) => {
-      const keys = Object.entries(widget.data);
-
-      return keys.map(([key, value]) => {
-        return <Box>
-          <Box display="inline" fontWeight="fontWeightBold">{key}</Box>: {value}
-        </Box>
-      });
-    }*/
 
     const getWidgetDetails = (widget: Widget) => {
 
@@ -124,7 +82,7 @@ const App: React.FC = () => {
       return <Element widget={widget as any} emit={emit} configuration={configuration} />;
     }
 
-    return state.widgets.map((widget: Widget) => {
+    return carverUserState.widgets.map((widget: Widget) => {
       return (
         <Paper key={widget.id}>
           <Box p={1} m={1}>
@@ -162,7 +120,7 @@ const App: React.FC = () => {
         label="Debug Log"
         fullWidth={true}
         multiline={true}
-        value={logs}
+        value={loggerState.textLog}
         InputProps={{
           readOnly: true,
         }}

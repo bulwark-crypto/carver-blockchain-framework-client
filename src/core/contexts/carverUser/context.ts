@@ -44,7 +44,7 @@ const reducer: Reducer = (state, event) => {
     const { type, payload } = event;
 
     switch (type) {
-        case commonLanguage.events.StateSet:
+        case commonLanguage.events.PublicState.Set:
             console.log('** state set:', state);
             return state;
         //return withWidgetEvent(state, payload);
@@ -73,7 +73,10 @@ const commonLanguage = {
         },
     },
     events: {
-        StateSet: 'STATE_SET',
+        PublicState: {
+            Set: 'SET',
+            Added: 'ADDED'
+        },
         Widgets: {
             Initialized: 'INTIALIZED', // This event is emitted by all widgets and contain their initial state
             StateUpdated: 'STATE_UPDATED', // This event is emitted when a widget state changes. It will contain a new state for the widget (this can only contain a few keys)
