@@ -5,8 +5,6 @@ const reducer: Reducer = (state, event) => {
 
     switch (type) {
         case commonLanguage.commands.Add:
-            console.log('** state set:', state);
-
             const timePrefix = new Date().toISOString()
 
             const log = JSON.stringify(payload);

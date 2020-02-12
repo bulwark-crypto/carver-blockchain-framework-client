@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import { config } from './config'
 import { TextField, Box, Paper, Grid } from '@material-ui/core';
 
-import { reducer as carverUserReducer, initialState as carverUserInitialState, commonLanguage as carverUserCommonLanguage } from './core/contexts/carverUser/context'
+import { reducer as carverUserReducer, initialState as carverUserInitialState, commonLanguage as carverUserCommonLanguage } from './core/contexts/publicState/context'
 import { reducer as loggerReducer, initialState as loggerInitialState, commonLanguage as loggerCommonLanguage } from './core/contexts/logger/context'
 import { Widget } from './core/interfaces';
 

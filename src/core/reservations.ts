@@ -2,7 +2,7 @@
 import io from 'socket.io-client';
 import axios from 'axios'
 import { config } from '../config'
-import { commonLanguage as carverUserCommonLanguage } from '../core/contexts/carverUser/context'
+import { commonLanguage as carverUserCommonLanguage } from './contexts/publicState/context'
 import { reducer as loggerReducer, initialState as loggerInitialState, commonLanguage as loggerCommonLanguage } from '../core/contexts/logger/context'
 import { Event } from '../core/interfaces'
 
@@ -21,11 +21,10 @@ const initReservationService = ({ loggerDispatch, carverUserDispatch }: Params) 
 
         socket.on('connect', () => {
             addLog('Socket connection established successfuly. Welcome to Carver Blockchain Framework!');
-
-            addLog('Initializing session...');
+            /*
             socket.emit('emit', {
                 type: carverUserCommonLanguage.commands.Connect
-            })
+            })*/
         });
 
         socket.on('disconnect', () => {
@@ -35,7 +34,8 @@ const initReservationService = ({ loggerDispatch, carverUserDispatch }: Params) 
 
         // Forward public state events to the reducer
         const eventsToForwardToReducer = [
-            carverUserCommonLanguage.events.PublicState.Set
+            carverUserCommonLanguage.events.Reset,
+            carverUserCommonLanguage.events.Appended
         ];
         for (const eventToForwardToReducer of eventsToForwardToReducer) {
             socket.on(eventToForwardToReducer, (event: any) => {

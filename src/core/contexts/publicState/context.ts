@@ -1,5 +1,5 @@
 import { Reducer, Event, Widget } from "../../interfaces";
-
+/*
 const withWidgetEvent = (state: any, event: Event) => {
     const { type, id, payload } = event;
 
@@ -38,30 +38,25 @@ const withWidgetEvent = (state: any, event: Event) => {
     }
     return state
 
-}
+}*/
 
 const reducer: Reducer = (state, event) => {
     const { type, payload } = event;
 
     switch (type) {
-        case commonLanguage.events.PublicState.Set:
-            console.log('** state set:', state);
+        case commonLanguage.events.Reset:
+            console.log('** state Reset:', state, event);
             return state;
-        //return withWidgetEvent(state, payload);
-        case commonLanguage.events.Widgets.Emitted:
-            return withWidgetEvent(state, payload);
-        case commonLanguage.events.Widgets.Removed:
-            const { id } = payload; // id of widget to remove
-            return {
-                ...state,
-                widgets: state.widgets.filter((widget: any) => widget.id !== id)
-            }
+        case commonLanguage.events.Appended:
+            console.log('** state appended:', state, event);
+            return state;
 
     }
     return state
 }
 
 const commonLanguage = {
+    //@todo move commands to carverUser context
     commands: {
         Connect: 'CONNECT',
 
@@ -73,17 +68,8 @@ const commonLanguage = {
         },
     },
     events: {
-        PublicState: {
-            Set: 'SET',
-            Added: 'ADDED'
-        },
-        Widgets: {
-            Initialized: 'INTIALIZED', // This event is emitted by all widgets and contain their initial state
-            StateUpdated: 'STATE_UPDATED', // This event is emitted when a widget state changes. It will contain a new state for the widget (this can only contain a few keys)
-
-            Emitted: 'WIDGETS:EMITTED',
-            Removed: 'WIDGETS:REMOVED',
-        }
+        Reset: 'RESET',
+        Appended: 'APPENDED'
     }
 }
 const initialState = {
