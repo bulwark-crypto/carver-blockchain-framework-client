@@ -1,56 +1,27 @@
 import { Reducer, Event, Widget } from "../../interfaces";
-/*
-const withWidgetEvent = (state: any, event: Event) => {
-    const { type, id, payload } = event;
-
-    console.log('*Widget Event:', event);
-    switch (type) {
-        case commonLanguage.events.Widgets.Initialized:
-            // When widgets are initialized they're added to the state widgets with the provided payload
-            return {
-                ...state,
-                widgets: [
-                    ...state.widgets,
-                    { id, ...payload }
-                ]
-            }
-            break;
-        case commonLanguage.events.Widgets.StateUpdated:
-            // Find widget we're trying to update and change it's state
-            const widgets = state.widgets.map((widget: Widget) => {
-                if (widget.id === id) {
-                    return {
-                        ...widget,
-                        ...event.payload
-                    }
-                }
-
-                return widget;
-            })
-
-            return {
-                ...state,
-                widgets
-            }
-
-            break;
-
-    }
-    return state
-
-}*/
 
 const reducer: Reducer = (state, event) => {
     const { type, payload } = event;
+    const { id, parent } = payload;
 
     switch (type) {
-        case commonLanguage.events.Reset:
-            console.log('** state Reset:', state, event);
-            return state;
-        case commonLanguage.events.Appended:
-            console.log('** state appended:', state, event);
-            return state;
-
+        case commonLanguage.events.Pushed:
+            return {
+                ...state,
+                objects: {
+                    ...state.objects,
+                    [id]: payload
+                },
+                root: (!parent ? payload : state.root)
+            }
+        case commonLanguage.events.Reduced:
+            return {
+                ...state,
+                objects: {
+                    ...state.objects,
+                    [id]: payload
+                }
+            }
     }
     return state
 }
@@ -67,14 +38,15 @@ const commonLanguage = {
             Command: 'WIDGETS:COMMAND',
         },
     },
+
     events: {
-        Reset: 'RESET',
-        Appended: 'APPENDED'
+        Pushed: 'PUSHED',
+        Reduced: 'REDUCED'
     }
 }
 const initialState = {
-    emit: [],
-    widgets: []
+    objects: {},
+    root: null
 }
 
 export {

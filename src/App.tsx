@@ -8,7 +8,7 @@ import { reducer as carverUserReducer, initialState as carverUserInitialState, c
 import { reducer as loggerReducer, initialState as loggerInitialState, commonLanguage as loggerCommonLanguage } from './core/contexts/logger/context'
 import { Widget } from './core/interfaces';
 
-import { widgetConfigurations } from './widgets/configurations'
+import { variantConfigurations, renderObject } from './variants/configurations'
 
 import { initReservationService } from './core/reservations'
 
@@ -66,9 +66,11 @@ const App: React.FC = () => {
     initConnection();
   }, [])
 
-  const getWidgets = () => {
+  const getVariants = () => {
+    console.log('***', variantConfigurations)
 
-    const getWidgetDetails = (widget: Widget) => {
+    return <div>Variants</div>
+    /*const getVariant = (widget: Widget) => {
 
       const configuration = widgetConfigurations.find(widgetConfiguration => widgetConfiguration.variant === widget.configuration.variant);
       if (!configuration) {
@@ -90,11 +92,28 @@ const App: React.FC = () => {
               Remove
             </Button>
 
-            {getWidgetDetails(widget)}
+            {getVariant(widget)}
           </Box>
         </Paper >)
+    });*/
+  }
+
+
+
+  const renderRootObject = () => {
+    const rootObject = carverUserState.root;
+
+    if (!rootObject) {
+      return <div>Loading...</div>
+    }
+
+    return renderObject({
+      object: rootObject,
+      state: carverUserState,
+      dispatch: carverUserDispatch
     });
   }
+
 
   return (
     <Box p={2}>
@@ -115,7 +134,7 @@ const App: React.FC = () => {
           </Grid>
         </Grid>
       </Box>
-      {getWidgets()}
+      {renderRootObject()}
       <TextField
         label="Debug Log"
         fullWidth={true}
