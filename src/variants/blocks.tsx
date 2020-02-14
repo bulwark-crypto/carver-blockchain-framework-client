@@ -2,8 +2,9 @@ import React, { useState, useEffect, useReducer } from 'react';
 import { TableCell, Box, TableContainer, TableHead, TablePagination, TableRow, Table, TableBody, TableFooter, TableSortLabel } from '@material-ui/core';
 import TablePaginationActions from '@material-ui/core/TablePagination/TablePaginationActions';
 
-import { commonLanguage as carverUserCommonLanguage } from '../../core/contexts/publicState/context'
-import { Widget } from '../../core/interfaces';
+import { commonLanguage as carverUserCommonLanguage } from '../core/contexts/publicState/context'
+import { Widget } from '../core/interfaces';
+import { VariantProps } from './configurations';
 
 interface PageQuery {
     page: number;
@@ -35,11 +36,18 @@ const commonLanguage = {
 export interface TableDisplayOptions {
     columns: Column[];
 }
-const WidgetTableDisplay: React.FC<Props> = ({ emit, widget, options }) => {
+const WidgetTableDisplay: React.FC<VariantProps> = React.memo(({ object, state, emit }) => {
+    const widget = object;
+
+    console.log('render:', widget);
 
 
-    const { id, rows } = widget;
-    const { variant } = widget.configuration;
+    const { id, rows, variant } = widget;
+
+    if (!rows) {
+        return <Box>Loading...</Box>
+    }
+
 
     const onChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, page: number) => {
         emit(carverUserCommonLanguage.commands.Widgets.Command, {
@@ -142,8 +150,6 @@ const WidgetTableDisplay: React.FC<Props> = ({ emit, widget, options }) => {
         </TableContainer>
     </Box>
 
-}
+})
 
-export {
-    WidgetTableDisplay
-}
+export default WidgetTableDisplay

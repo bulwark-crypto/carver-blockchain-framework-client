@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useReducer } from 'react';
 
 import WidgetsContainerElement from '../variants/widgetsContainer'
+import BlocksElement from '../variants/blocks'
 
 import { Reducer, Event, Widget } from "../core/interfaces";
+import { Box } from '@material-ui/core';
 
 export interface Configuration {
     variant: string;
@@ -14,7 +16,13 @@ export interface Configuration {
 export interface RenderObjectParams {
     object: any;
     state: any;
-    dispatch: React.Dispatch<Event>;
+    emit: (type: string, payload: any) => void;
+}
+
+export interface VariantProps {
+    object: any;
+    state: any;
+    emit: (type: string, payload: any) => void;
 }
 
 const variantConfigurations = {
@@ -23,42 +31,25 @@ const variantConfigurations = {
         description: 'This variant contains a set of widgets. Children of this object are further rendered as variants',
 
         element: WidgetsContainerElement,
-        /*options: {
-            columns: [
-                {
-                    key: 'page',
-                    title: 'Page',
-                    sortable: true
-                }
-            ]
-        } as TableDisplayOptions*/
     } as Configuration,
-    /*{
-        variant: 'txs',
-        title: 'Txs',
+    blocks: {
+        title: 'Blocks',
 
-        element: WidgetTableDisplay,
-        options: {
-            columns: [
-                {
-                    key: 'page',
-                    title: 'Page',
-                    sortable: true
-                }
-            ]
-        } as TableDisplayOptions
-    },*/
-    /* {
-         variant: 'rpcGetInfo',
-         title: 'Network Info',
-     },*/
+        element: BlocksElement
+    } as Configuration,
 }
 
-const renderObject = ({ object, state, dispatch }: RenderObjectParams) => {
+const renderObject = ({ object, state, emit }: RenderObjectParams) => {
     const variantConfiguration = (variantConfigurations as any)[object.variant] as Configuration;
+    if (!variantConfiguration) {
+        return <Box>Unable to find variant: {object.variant}</Box>
+    }
 
-    return <variantConfiguration.element object={object} state={state} dispatch={dispatch} />
+    return <variantConfiguration.element object={object} state={state} emit={emit} />
 }
 
 
-export { variantConfigurations, renderObject }
+export {
+    variantConfigurations,
+    renderObject
+}

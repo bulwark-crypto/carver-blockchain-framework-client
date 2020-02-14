@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import './App.css';
-import Button from '@material-ui/core/Button';
 import { config } from './config'
-import { TextField, Box, Paper, Grid } from '@material-ui/core';
+import { TextField, Box } from '@material-ui/core';
 
-import { reducer as carverUserReducer, initialState as carverUserInitialState, commonLanguage as carverUserCommonLanguage } from './core/contexts/publicState/context'
+import { reducer as carverUserReducer, initialState as carverUserInitialState } from './core/contexts/publicState/context'
 import { reducer as loggerReducer, initialState as loggerInitialState, commonLanguage as loggerCommonLanguage } from './core/contexts/logger/context'
-import { Widget } from './core/interfaces';
 
-import { variantConfigurations, renderObject } from './variants/configurations'
+import { renderObject } from './variants/configurations'
 
 import { initReservationService } from './core/reservations'
 
@@ -52,88 +50,26 @@ const App: React.FC = () => {
     socket.emit('emit', { type, payload })
   }
 
-  const addWidget = (variant: string) => {
-    emit(carverUserCommonLanguage.commands.Widgets.Add, {
-      variant
-    });
-  }
-  const removeWidget = (id: number) => {
-    emit(carverUserCommonLanguage.commands.Widgets.Remove, { id });
-  }
-
   useEffect(() => {
     addLog(`Starting Carver Blockchain Framework (Version ${config.version})...`);
     initConnection();
   }, [])
 
-  const getVariants = () => {
-    console.log('***', variantConfigurations)
-
-    return <div>Variants</div>
-    /*const getVariant = (widget: Widget) => {
-
-      const configuration = widgetConfigurations.find(widgetConfiguration => widgetConfiguration.variant === widget.configuration.variant);
-      if (!configuration) {
-        addLog(`Unable to find widget configuration ${widget.configuration.variant}`);
-
-        return null;
-      }
-
-      const { element: Element } = configuration
-
-      return <Element widget={widget as any} emit={emit} configuration={configuration} />;
-    }
-
-    return carverUserState.widgets.map((widget: Widget) => {
-      return (
-        <Paper key={widget.id}>
-          <Box p={1} m={1}>
-            <Button variant="contained" onClick={() => removeWidget(widget.id)}>
-              Remove
-            </Button>
-
-            {getVariant(widget)}
-          </Box>
-        </Paper >)
-    });*/
-  }
-
-
-
   const renderRootObject = () => {
     const rootObject = carverUserState.root;
 
     if (!rootObject) {
-      return <div>Loading...</div>
+      return <Box>Loading...</Box>
     }
-
     return renderObject({
       object: rootObject,
       state: carverUserState,
-      dispatch: carverUserDispatch
+      emit
     });
   }
 
-
   return (
     <Box p={2}>
-      {/*@todo convert these buttons to dropdown menu*/}
-      <Box mb={3}>
-        <Grid container>
-          <Grid item>
-            <Button variant="contained" onClick={() => addWidget('blocks')}>
-              Add Blocks Widget
-            </Button>
-          </Grid>
-          <Grid item>
-            <Box mx={3}>
-              <Button variant="contained" onClick={() => addWidget('txs')}>
-                Add Network Info Widget
-          </Button>
-            </Box>
-          </Grid>
-        </Grid>
-      </Box>
       {renderRootObject()}
       <TextField
         label="Debug Log"

@@ -12,6 +12,9 @@ const reducer: Reducer = (state, event) => {
                     ...state.objects,
                     [id]: payload
                 },
+                children: {
+                    [parent]: (state.children[parent] ? [...state.children[parent], id] : [id])
+                },
                 root: (!parent ? payload : state.root)
             }
         case commonLanguage.events.Reduced:
@@ -19,7 +22,10 @@ const reducer: Reducer = (state, event) => {
                 ...state,
                 objects: {
                     ...state.objects,
-                    [id]: payload
+                    [id]: {
+                        ...state.objects[id],
+                        ...payload
+                    }
                 }
             }
     }
@@ -46,6 +52,7 @@ const commonLanguage = {
 }
 const initialState = {
     objects: {},
+    children: {},
     root: null
 }
 
