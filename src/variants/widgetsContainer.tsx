@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { VariantProps, renderObject } from './configurations';
 import { Box, Grid, Button, Paper } from '@material-ui/core';
 
 import { commonLanguage as carverUserCommonLanguage } from '../core/contexts/publicState/context'
+import { CarverUserContext, CarverUserContextValue } from '../core/reactContexts/carverUser'
+import { SocketContext, SocketContextValue } from '../core/reactContexts/socket'
 
-const WidgetTableDisplay: React.FC<VariantProps> = ({ object, state, emit }) => {
-
+const WidgetTableDisplay: React.FC<VariantProps> = ({ object }) => {
+    const { state } = useContext(CarverUserContext)
+    const { emit } = useContext(SocketContext)
 
     const addWidget = (variant: string) => {
         emit(carverUserCommonLanguage.commands.Widgets.Add, {
@@ -29,9 +32,7 @@ const WidgetTableDisplay: React.FC<VariantProps> = ({ object, state, emit }) => 
                         Remove
                     </Button>
                     {renderObject({
-                        object: state.objects[widgetObjectId],
-                        state: state,
-                        emit
+                        object: state.objects[widgetObjectId]
                     })}
 
                 </Box>

@@ -10,6 +10,10 @@ import { renderObject } from './variants/configurations'
 
 import { initReservationService } from './core/reservations'
 
+import { CarverUserContext } from './core/reactContexts/carverUser'
+import { SocketContext } from './core/reactContexts/socket';
+
+
 const App: React.FC = () => {
   const [carverUserState, carverUserDispatch] = useReducer(carverUserReducer, carverUserInitialState);
   const [loggerState, loggerDispatch] = useReducer(loggerReducer, loggerInitialState);
@@ -46,6 +50,7 @@ const App: React.FC = () => {
     if (!socket) {
       return;
     }
+    addLog(`Emit`, type, payload);
 
     socket.emit('emit', { type, payload })
   }
@@ -62,15 +67,19 @@ const App: React.FC = () => {
       return <Box>Loading...</Box>
     }
     return renderObject({
-      object: rootObject,
-      state: carverUserState,
-      emit
+      object: rootObject
     });
   }
 
+  console.log('*** rerender')
+
   return (
     <Box p={2}>
-      {renderRootObject()}
+      <SocketContext.Provider value={{ emit }}>
+        <CarverUserContext.Provider value={{ state: carverUserState }}>
+          {renderRootObject()}
+        </CarverUserContext.Provider>
+      </SocketContext.Provider>
       <TextField
         label="Debug Log"
         fullWidth={true}

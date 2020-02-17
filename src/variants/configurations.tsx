@@ -15,14 +15,12 @@ export interface Configuration {
 }
 export interface RenderObjectParams {
     object: any;
-    state: any;
-    emit: (type: string, payload: any) => void;
+    //state: any;
+    //emit: (type: string, payload: any) => void;
 }
 
 export interface VariantProps {
     object: any;
-    state: any;
-    emit: (type: string, payload: any) => void;
 }
 
 const variantConfigurations = {
@@ -39,13 +37,13 @@ const variantConfigurations = {
     } as Configuration,
 }
 
-const renderObject = ({ object, state, emit }: RenderObjectParams) => {
+const renderObject = ({ object }: RenderObjectParams) => {
     const variantConfiguration = (variantConfigurations as any)[object.variant] as Configuration;
     if (!variantConfiguration) {
         return <Box>Unable to find variant: {object.variant}</Box>
     }
 
-    return <variantConfiguration.element object={object} state={state} emit={emit} />
+    return <variantConfiguration.element object={object} />
 }
 
 
