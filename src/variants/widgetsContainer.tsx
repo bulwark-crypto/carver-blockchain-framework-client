@@ -1,14 +1,14 @@
 import React, { useContext } from 'react';
-import { VariantProps, renderObject } from './configurations';
+import { VariantProps, RenderObject } from '../core/elements/RenderObject';
 import { Box, Grid, Button, Paper } from '@material-ui/core';
 
 import { commonLanguage as carverUserCommonLanguage } from '../core/contexts/publicState/context'
 import { CarverUserContext, CarverUserContextValue } from '../core/reactContexts/carverUser'
-import { SocketContext, SocketContextValue } from '../core/reactContexts/socket'
+import { SocketContext, SocketContextValue, useSocket } from '../core/reactContexts/socket'
 
-const WidgetTableDisplay: React.FC<VariantProps> = ({ object }) => {
-    const { state } = useContext(CarverUserContext)
-    const { emit } = useContext(SocketContext)
+const WidgetTableDisplay: React.FC<VariantProps> = ({ object, childrenIds }) => {
+    const { socket } = useContext(SocketContext)
+    const { emit } = useSocket(socket);
 
     const addWidget = (variant: string) => {
         emit(carverUserCommonLanguage.commands.Widgets.Add, {
@@ -20,21 +20,17 @@ const WidgetTableDisplay: React.FC<VariantProps> = ({ object }) => {
     }
 
     const renderWidgets = () => {
-        const widgetObjectIds = state.children[object.id]
-        if (!widgetObjectIds) {
+        if (!childrenIds) {
             return null;
         }
 
-        return widgetObjectIds.map((widgetObjectId: any) => {
-            return <Paper key={widgetObjectId}>
+        return childrenIds.map((childId: any) => {
+            return <Paper key={childId}>
                 <Box p={1} m={1}>
-                    <Button variant="contained" onClick={() => removeWidget(widgetObjectId)}>
+                    <Button variant="contained" onClick={() => removeWidget(childId)}>
                         Remove
                     </Button>
-                    {renderObject({
-                        object: state.objects[widgetObjectId]
-                    })}
-
+                    <RenderObject objectId={childId} />
                 </Box>
             </Paper>
         })

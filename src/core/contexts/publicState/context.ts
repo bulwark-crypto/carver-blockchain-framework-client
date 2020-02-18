@@ -15,7 +15,7 @@ const reducer: Reducer = (state, event) => {
                 children: {
                     [parent]: (state.children[parent] ? [...state.children[parent], id] : [id])
                 },
-                root: (!parent ? payload : state.root)
+                rootId: (!parent ? id : state.rootId)
             }
         case commonLanguage.events.Reduced:
             return {
@@ -31,6 +31,18 @@ const reducer: Reducer = (state, event) => {
     }
     return state
 }
+// Alternative is to nest children inside object:
+/*objects: {
+    ...state.objects,
+    [id]: payload,
+    [parent]: {
+        ...state.objects[parent],
+        children: [
+            ...(state.objects[parent] && state.objects[parent].children ? [...state.objects[parent].children] : []),
+            id
+        ]
+    }
+},*/
 
 const commonLanguage = {
     //@todo move commands to carverUser context

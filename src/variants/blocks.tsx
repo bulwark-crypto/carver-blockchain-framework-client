@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useReducer, useContext } from 'react';
 
-import { VariantProps } from './configurations';
+import { VariantProps } from '../core/elements/RenderObject';
 
 import { VariantCommonTable, VariantCommonTableOptions, commonLanguage } from './common/table'
 
 import { SocketContext, SocketContextValue } from '../core/reactContexts/socket'
 
-const VariantBlocks: React.FC<VariantProps> = React.memo(({ object }) => {
-    const { emit } = useContext(SocketContext)
+const VariantBlocks: React.FC<VariantProps> = React.memo(({ object, childrenIds, socket }) => {
 
     const options: VariantCommonTableOptions = {
         columns: [
@@ -36,7 +35,7 @@ const VariantBlocks: React.FC<VariantProps> = React.memo(({ object }) => {
     }
 
 
-    return <VariantCommonTable object={object} options={options} />
+    return <VariantCommonTable object={object} childrenIds={childrenIds} socket={socket} options={options} />
 })
 
 export default VariantBlocks

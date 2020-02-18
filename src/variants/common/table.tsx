@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useReducer, useContext } from 'react';
-import { TableCell, Box, TableContainer, TableHead, TablePagination, TableRow, Table, TableBody, TableFooter, TableSortLabel } from '@material-ui/core';
+import React from 'react';
+import { TableCell, Box, TableContainer, TableHead, TablePagination, TableRow, Table, TableBody, TableFooter } from '@material-ui/core';
 import TablePaginationActions from '@material-ui/core/TablePagination/TablePaginationActions';
 
 import { commonLanguage as carverUserCommonLanguage } from '../../core/contexts/publicState/context'
-import { VariantProps } from '../configurations';
+import { VariantProps } from '../../core/elements/RenderObject';
 
-import { SocketContext, SocketContextValue } from '../../core/reactContexts/socket'
+import { useSocket } from '../../core/reactContexts/socket'
 
 export interface Column {
     key: string;
@@ -17,10 +17,6 @@ export interface VariantCommonTableOptions {
     clickable: boolean;
 }
 
-interface PageQuery {
-    page: number;
-    limit: number;
-}
 const commonLanguage = {
     commands: {
         Select: 'SELECT',
@@ -31,14 +27,16 @@ const commonLanguage = {
 interface Props extends VariantProps {
     options: VariantCommonTableOptions;
 }
-const VariantCommonTable: React.FC<Props> = React.memo(({ object, options }) => {
-    const { emit } = useContext(SocketContext)
+const VariantCommonTable: React.FC<Props> = React.memo(({ object, options, socket }) => {
+    const { emit } = useSocket(socket);
+
+    console.log('*** rerender')
 
     const widget = object;
 
     const { columns } = options;
 
-    const { id, rows, variant } = widget;
+    const { id, rows } = widget;
 
     if (!rows) {
         return <Box>Loading...</Box>

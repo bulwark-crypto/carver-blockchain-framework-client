@@ -6,12 +6,12 @@ import { TextField, Box } from '@material-ui/core';
 import { reducer as carverUserReducer, initialState as carverUserInitialState } from './core/contexts/publicState/context'
 import { reducer as loggerReducer, initialState as loggerInitialState, commonLanguage as loggerCommonLanguage } from './core/contexts/logger/context'
 
-import { renderObject } from './variants/configurations'
+import { RenderObject } from './core/elements/RenderObject'
 
 import { initReservationService } from './core/reservations'
 
 import { CarverUserContext } from './core/reactContexts/carverUser'
-import { SocketContext } from './core/reactContexts/socket';
+import { SocketContext, useSocket } from './core/reactContexts/socket';
 
 
 const App: React.FC = () => {
@@ -46,14 +46,6 @@ const App: React.FC = () => {
     }
   }
 
-  const emit = (type: string, payload: any) => {
-    if (!socket) {
-      return;
-    }
-    addLog(`Emit`, type, payload);
-
-    socket.emit('emit', { type, payload })
-  }
 
   useEffect(() => {
     addLog(`Starting Carver Blockchain Framework (Version ${config.version})...`);
@@ -61,21 +53,17 @@ const App: React.FC = () => {
   }, [])
 
   const renderRootObject = () => {
-    const rootObject = carverUserState.root;
+    const { rootId } = carverUserState;
 
-    if (!rootObject) {
+    if (!rootId) {
       return <Box>Loading...</Box>
     }
-    return renderObject({
-      object: rootObject
-    });
+    return <RenderObject objectId={rootId} />;
   }
-
-  console.log('*** rerender')
 
   return (
     <Box p={2}>
-      <SocketContext.Provider value={{ emit }}>
+      <SocketContext.Provider value={{ socket } as any}>
         <CarverUserContext.Provider value={{ state: carverUserState }}>
           {renderRootObject()}
         </CarverUserContext.Provider>
