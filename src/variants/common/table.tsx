@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { TableCell, Box, TableContainer, TableHead, TablePagination, TableRow, Table, TableBody, TableFooter } from '@material-ui/core';
 import TablePaginationActions from '@material-ui/core/TablePagination/TablePaginationActions';
 
 import { commonLanguage as carverUserCommonLanguage } from '../../core/contexts/publicState/context'
 import { VariantProps } from '../../core/elements/RenderObject';
 
-import { useSocket } from '../../core/reactContexts/socket'
+import { useSocket, SocketContext } from '../../core/reactContexts/socket'
 
 export interface Column {
     key: string;
@@ -27,7 +27,8 @@ const commonLanguage = {
 interface Props extends VariantProps {
     options: VariantCommonTableOptions;
 }
-const VariantCommonTable: React.FC<Props> = React.memo(({ object, options, socket }) => {
+const VariantCommonTable: React.FC<Props> = React.memo(({ object, options }) => {
+    const { socket } = useContext(SocketContext)
     const { emit } = useSocket(socket);
 
     console.log('*** rerender')

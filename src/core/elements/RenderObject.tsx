@@ -12,7 +12,6 @@ import { SocketContext, useSocket } from '../reactContexts/socket';
 export interface VariantProps {
     object: any;
     childrenIds: string[];
-    socket: SocketIOClient.Socket;
 }
 export interface Configuration {
     variant: string;
@@ -23,18 +22,17 @@ export interface Configuration {
 }
 export interface RenderObjectParams {
     objectId: string;
-    //state: any;
-    //emit: (type: string, payload: any) => void;
 }
 
-
 const variantConfigurations = {
+
     widgetsContainer: {
         title: 'Widgets Container',
         description: 'This variant contains a set of widgets. Children of this object are further rendered as variants',
 
         element: WidgetsContainerElement,
     } as Configuration,
+
     blocks: {
         title: 'Blocks',
 
@@ -45,7 +43,6 @@ const variantConfigurations = {
 const RenderObject: React.FC<RenderObjectParams> = ({ objectId }) => {
     const { state } = useContext(CarverUserContext);
 
-    const { socket } = useContext(SocketContext)
 
     const childrenIds = state.children[objectId];
     const object = state.objects[objectId];
@@ -55,9 +52,8 @@ const RenderObject: React.FC<RenderObjectParams> = ({ objectId }) => {
         return <Box>Unable to find variant: {object.variant}</Box>
     }
 
-    return <variantConfiguration.element object={object} childrenIds={childrenIds} socket={socket} />
+    return <variantConfiguration.element object={object} childrenIds={childrenIds} />
 }
-
 
 export {
     variantConfigurations,

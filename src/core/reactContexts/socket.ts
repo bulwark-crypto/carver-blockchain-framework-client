@@ -2,6 +2,7 @@ import React, { useState, useEffect, useReducer } from 'react';
 
 export interface SocketContextValue {
     socket: SocketIOClient.Socket;
+    setSocket: React.Dispatch<React.SetStateAction<SocketIOClient.Socket | undefined>>;
 }
 
 const SocketContext = React.createContext<SocketContextValue>(null as any);
