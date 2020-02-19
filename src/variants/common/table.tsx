@@ -5,7 +5,7 @@ import TablePaginationActions from '@material-ui/core/TablePagination/TablePagin
 import { commonLanguage as carverUserCommonLanguage } from '../../core/carver/contexts/publicState/context'
 import { VariantProps } from '../../core/react/elements/RenderObject';
 
-import { useSocket, SocketContext } from '../../core/react/contexts/socket'
+import { useSocket, SocketContext } from '../../core/react/contexts/Socket'
 
 export interface Column {
     key: string;

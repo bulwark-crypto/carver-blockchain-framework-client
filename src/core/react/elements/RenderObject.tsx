@@ -6,8 +6,8 @@ import BlocksElement from '../../../variants/blocks'
 import { Reducer, Event, Widget } from "../../carver/interfaces";
 import { Box } from '@material-ui/core';
 
-import { CarverUserContext } from '../contexts/carverUser'
-import { SocketContext, useSocket } from '../contexts/socket';
+import { CarverUserContext } from '../contexts/CarverUser'
+import { SocketContext, useSocket } from '../contexts/Socket';
 
 export interface VariantProps {
     object: any;
@@ -24,6 +24,7 @@ export interface RenderObjectParams {
     objectId: string;
 }
 
+//@todo move this to config
 const variantConfigurations = {
 
     widgetsContainer: {

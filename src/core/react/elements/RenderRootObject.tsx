@@ -5,16 +5,16 @@ import { TextField, Box } from '@material-ui/core';
 import { reducer as carverUserReducer, initialState as carverUserInitialState } from '../../carver/contexts/publicState/context'
 import { reducer as loggerReducer, initialState as loggerInitialState, commonLanguage as loggerCommonLanguage } from '../../carver/contexts/logger/context'
 
-import { RenderObject } from './RenderObject'
+import { RenderObject, RenderObjectParams } from './RenderObject'
 
 import { initReservationService } from '../../carver/reservations'
 
-import { SocketContext, useSocket } from '../contexts/socket';
-import { CarverUserContext } from '../contexts/carverUser';
+import { SocketContext, useSocket } from '../contexts/Socket';
+import { CarverUserContext } from '../contexts/CarverUser';
 
-const CarverUserProvider: React.FC = () => {
+const RenderRootObject: React.FC = () => {
+    const { state: carverUserState, dispatch: carverUserDispatch } = useContext(CarverUserContext)
     const { setSocket } = useContext(SocketContext)
-    const [carverUserState, carverUserDispatch] = useReducer(carverUserReducer, carverUserInitialState);
     const [loggerState, loggerDispatch] = useReducer(loggerReducer, loggerInitialState);
 
     const addLog = (...args: any) => {
@@ -59,7 +59,7 @@ const CarverUserProvider: React.FC = () => {
         return <RenderObject objectId={rootId} />;
     }
 
-    return (<CarverUserContext.Provider value={{ state: carverUserState }}>
+    return <Box p={2}>
         {renderRootObject()}
         <TextField
             label="Debug Log"
@@ -70,8 +70,6 @@ const CarverUserProvider: React.FC = () => {
                 readOnly: true,
             }}
         />
-    </CarverUserContext.Provider>
-    );
+    </Box>
 }
-
-export default CarverUserProvider;
+export default RenderRootObject;

@@ -7,6 +7,12 @@ export interface SocketContextValue {
 
 const SocketContext = React.createContext<SocketContextValue>(null as any);
 
+const SocketContextProvider: React.FC = ({ children }) => {
+    const [socket, setSocket] = useState<SocketIOClient.Socket>();
+
+    return <SocketContext.Provider value={{ socket, setSocket } as any}>{children}</SocketContext.Provider>
+}
+
 const useSocket = (socket: any) => {
     const emit = (type: string, payload: any) => {
         if (!socket) {
@@ -21,4 +27,8 @@ const useSocket = (socket: any) => {
     }
 }
 
-export { SocketContext, useSocket }
+export {
+    SocketContext,
+    SocketContextProvider,
+    useSocket
+}
