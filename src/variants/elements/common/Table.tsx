@@ -2,10 +2,10 @@ import React, { useContext } from 'react';
 import { TableCell, Box, TableContainer, TableHead, TablePagination, TableRow, Table, TableBody, TableFooter } from '@material-ui/core';
 import TablePaginationActions from '@material-ui/core/TablePagination/TablePaginationActions';
 
-import { commonLanguage as carverUserCommonLanguage } from '../../core/carver/contexts/publicState/context'
-import { VariantProps } from '../configuration';
+import { commonLanguage as carverUserCommonLanguage } from '../../../core/carver/contexts/publicState/context'
+import { VariantProps } from '../../configuration';
 
-import { useSocket, SocketContext } from '../../core/react/contexts/Socket'
+import { useSocket, SocketContext } from '../../../core/react/contexts/Socket'
 
 export interface Column {
     key: string;

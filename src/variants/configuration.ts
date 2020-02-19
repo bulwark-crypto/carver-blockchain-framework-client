@@ -1,6 +1,6 @@
 
-import WidgetsContainerElement from './widgetsContainer'
-import BlocksElement from './blocks'
+import WidgetsContainerElement from './elements/WidgetsContainer'
+import BlocksElement from './elements/Blocks'
 
 export interface VariantProps {
     object: any;

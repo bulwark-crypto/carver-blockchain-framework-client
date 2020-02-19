@@ -1,6 +1,6 @@
 import React from 'react';
-import { VariantProps } from './configuration';
-import { VariantCommonTable, VariantCommonTableOptions } from './common/table'
+import { VariantProps } from '../configuration';
+import { VariantCommonTable, VariantCommonTableOptions } from './common/Table'
 
 const VariantBlocks: React.FC<VariantProps> = React.memo(({ object, childrenIds }) => {
     const options: VariantCommonTableOptions = {
