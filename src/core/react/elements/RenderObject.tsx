@@ -1,44 +1,11 @@
-import React, { useState, useEffect, useReducer, useContext } from 'react';
-
-import WidgetsContainerElement from '../../../variants/widgetsContainer'
-import BlocksElement from '../../../variants/blocks'
-
-import { Reducer, Event, Widget } from "../../carver/interfaces";
+import React, { useContext } from 'react';
 import { Box } from '@material-ui/core';
 
 import { CarverUserContext } from '../contexts/CarverUser'
-import { SocketContext, useSocket } from '../contexts/Socket';
+import { variantConfigurations, Configuration } from '../../../variants/configuration';
 
-export interface VariantProps {
-    object: any;
-    childrenIds: string[];
-}
-export interface Configuration {
-    variant: string;
-    title: string;
-    description?: string;
-    element: React.FC<VariantProps>;
-    options?: any;
-}
 export interface RenderObjectParams {
     objectId: string;
-}
-
-//@todo move this to config
-const variantConfigurations = {
-
-    widgetsContainer: {
-        title: 'Widgets Container',
-        description: 'This variant contains a set of widgets. Children of this object are further rendered as variants',
-
-        element: WidgetsContainerElement,
-    } as Configuration,
-
-    blocks: {
-        title: 'Blocks',
-
-        element: BlocksElement
-    } as Configuration,
 }
 
 const RenderObject: React.FC<RenderObjectParams> = ({ objectId }) => {

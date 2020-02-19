@@ -3,7 +3,7 @@ import { TableCell, Box, TableContainer, TableHead, TablePagination, TableRow, T
 import TablePaginationActions from '@material-ui/core/TablePagination/TablePaginationActions';
 
 import { commonLanguage as carverUserCommonLanguage } from '../../core/carver/contexts/publicState/context'
-import { VariantProps } from '../../core/react/elements/RenderObject';
+import { VariantProps } from '../configuration';
 
 import { useSocket, SocketContext } from '../../core/react/contexts/Socket'
 

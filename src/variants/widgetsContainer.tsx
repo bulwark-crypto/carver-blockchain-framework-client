@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
-import { VariantProps, RenderObject } from '../core/react/elements/RenderObject';
+import { RenderObject } from '../core/react/elements/RenderObject';
+import { VariantProps } from './configuration'
 import { Box, Grid, Button, Paper } from '@material-ui/core';
 
 import { commonLanguage as carverUserCommonLanguage } from '../core/carver/contexts/publicState/context'

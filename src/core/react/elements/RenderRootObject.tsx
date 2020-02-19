@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useReducer, useContext } from 'react';
+import React, { useEffect, useReducer, useContext } from 'react';
 import { config } from '../../../config'
 import { TextField, Box } from '@material-ui/core';
 
-import { reducer as carverUserReducer, initialState as carverUserInitialState } from '../../carver/contexts/publicState/context'
 import { reducer as loggerReducer, initialState as loggerInitialState, commonLanguage as loggerCommonLanguage } from '../../carver/contexts/logger/context'
 
-import { RenderObject, RenderObjectParams } from './RenderObject'
+import { RenderObject } from './RenderObject'
 
 import { initReservationService } from '../../carver/reservations'
 
-import { SocketContext, useSocket } from '../contexts/Socket';
+import { SocketContext } from '../contexts/Socket';
 import { CarverUserContext } from '../contexts/CarverUser';
 
 const RenderRootObject: React.FC = () => {
