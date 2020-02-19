@@ -1,10 +1,10 @@
 
 import io from 'socket.io-client';
 import axios from 'axios'
-import { config } from '../config'
+import { config } from '../../config'
 import { commonLanguage as carverUserCommonLanguage } from './contexts/publicState/context'
-import { reducer as loggerReducer, initialState as loggerInitialState, commonLanguage as loggerCommonLanguage } from '../core/contexts/logger/context'
-import { Event } from '../core/interfaces'
+import { reducer as loggerReducer, initialState as loggerInitialState, commonLanguage as loggerCommonLanguage } from './contexts/logger/context'
+import { Event } from './interfaces'
 
 interface Params {
     carverUserDispatch: React.Dispatch<Event>;

@@ -2,15 +2,15 @@ import React, { useState, useEffect, useReducer, useContext } from 'react';
 import { config } from '../../../config'
 import { TextField, Box } from '@material-ui/core';
 
-import { reducer as carverUserReducer, initialState as carverUserInitialState } from '../../contexts/publicState/context'
-import { reducer as loggerReducer, initialState as loggerInitialState, commonLanguage as loggerCommonLanguage } from '../../contexts/logger/context'
+import { reducer as carverUserReducer, initialState as carverUserInitialState } from '../../carver/contexts/publicState/context'
+import { reducer as loggerReducer, initialState as loggerInitialState, commonLanguage as loggerCommonLanguage } from '../../carver/contexts/logger/context'
 
-import { RenderObject } from '../../elements/RenderObject'
+import { RenderObject } from './RenderObject'
 
-import { initReservationService } from '../../reservations'
+import { initReservationService } from '../../carver/reservations'
 
-import { SocketContext, useSocket } from '../../reactContexts/socket';
-import { CarverUserContext } from '../../reactContexts/carverUser';
+import { SocketContext, useSocket } from '../contexts/socket';
+import { CarverUserContext } from '../contexts/carverUser';
 
 const CarverUserProvider: React.FC = () => {
     const { setSocket } = useContext(SocketContext)

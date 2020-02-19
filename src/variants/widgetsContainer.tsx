@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
-import { VariantProps, RenderObject } from '../core/elements/RenderObject';
+import { VariantProps, RenderObject } from '../core/react/elements/RenderObject';
 import { Box, Grid, Button, Paper } from '@material-ui/core';
 
-import { commonLanguage as carverUserCommonLanguage } from '../core/contexts/publicState/context'
-import { CarverUserContext, CarverUserContextValue } from '../core/reactContexts/carverUser'
-import { SocketContext, SocketContextValue, useSocket } from '../core/reactContexts/socket'
+import { commonLanguage as carverUserCommonLanguage } from '../core/carver/contexts/publicState/context'
+import { CarverUserContext, CarverUserContextValue } from '../core/react/contexts/carverUser'
+import { SocketContext, SocketContextValue, useSocket } from '../core/react/contexts/socket'
 
 const WidgetTableDisplay: React.FC<VariantProps> = ({ object, childrenIds }) => {
     const { socket } = useContext(SocketContext)

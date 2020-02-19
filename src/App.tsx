@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import { Box } from '@material-ui/core';
 
-import { SocketContext } from './core/reactContexts/socket';
+import { SocketContext } from './core/react/contexts/socket';
 import CarverUserProvider from './core/react/elements/CarverUserProvider';
 
 const App: React.FC = () => {

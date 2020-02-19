@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useReducer, useContext } from 'react';
 
-import WidgetsContainerElement from '../../variants/widgetsContainer'
-import BlocksElement from '../../variants/blocks'
+import WidgetsContainerElement from '../../../variants/widgetsContainer'
+import BlocksElement from '../../../variants/blocks'
 
-import { Reducer, Event, Widget } from "../interfaces";
+import { Reducer, Event, Widget } from "../../carver/interfaces";
 import { Box } from '@material-ui/core';
 
-import { CarverUserContext } from '../reactContexts/carverUser'
-import { SocketContext, useSocket } from '../reactContexts/socket';
+import { CarverUserContext } from '../contexts/carverUser'
+import { SocketContext, useSocket } from '../contexts/socket';
 
 export interface VariantProps {
     object: any;
