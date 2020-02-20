@@ -19,6 +19,10 @@ const WidgetTableDisplay: React.FC<VariantProps> = ({ childrenIds }) => {
         emit(carverUserCommonLanguage.commands.Widgets.Remove, { id });
     }
 
+    const navigatePage = (page: string) => {
+        emit(carverUserCommonLanguage.commands.Pages.Navigate, { page });
+    }
+
     const renderWidgets = () => {
         if (!childrenIds) {
             return null;
@@ -38,18 +42,25 @@ const WidgetTableDisplay: React.FC<VariantProps> = ({ childrenIds }) => {
 
     return <div>
         <Box mb={3}>
+            <Grid container spacing={1}>
+                <Grid item>
+                    <Button variant="contained" onClick={() => navigatePage('blocks')}>
+                        Blocks Page
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button variant="contained" onClick={() => navigatePage('transactions')}>
+                        Transactions Page
+                    </Button>
+                </Grid>
+            </Grid>
+        </Box>
+        <Box mb={3}>
             <Grid container>
                 <Grid item>
                     <Button variant="contained" onClick={() => addWidget('blocks')}>
                         Add Blocks Widget
-                     </Button>
-                </Grid>
-                <Grid item>
-                    <Box mx={3}>
-                        <Button variant="contained" onClick={() => addWidget('txs')}>
-                            Add Network Info Widget
-                      </Button>
-                    </Box>
+                    </Button>
                 </Grid>
             </Grid>
         </Box>
