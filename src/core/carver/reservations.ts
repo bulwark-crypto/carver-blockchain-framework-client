@@ -34,14 +34,12 @@ const initReservationService = ({ loggerDispatch, carverUserDispatch }: Params) 
 
         // Forward public state events to the reducer
         const eventsToForwardToReducer = [
-            carverUserCommonLanguage.events.Pushed,
-            carverUserCommonLanguage.events.Reduced,
-            carverUserCommonLanguage.events.Set
+            carverUserCommonLanguage.events.Updated,
+
         ];
         for (const eventToForwardToReducer of eventsToForwardToReducer) {
             socket.on(eventToForwardToReducer, (event: any) => {
                 const eventToDispatch = {
-                    type: eventToForwardToReducer,
                     ...event
                 };
                 carverUserDispatch(eventToDispatch);

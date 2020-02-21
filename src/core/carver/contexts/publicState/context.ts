@@ -1,71 +1,68 @@
 import { Reducer, Event, Widget } from "../../interfaces";
 
 const reducer: Reducer = (state, event) => {
-    const { type, payload } = event; // payload will be array
+    const messages = event.payload; // Messages will come in as array of events
 
-    return payload.reduce((state: any, actionPayload: any) => {
-        const { id, parent } = actionPayload;
+    return messages.reduce((state: any, message: any) => {
+        const { type } = message;
 
         switch (type) {
             case commonLanguage.events.Pushed:
-                return {
-                    ...state,
-                    objects: {
-                        ...state.objects,
-                        [id]: actionPayload
-                    },
-                    children: {
-                        [parent]: (state.children[parent] ? [...state.children[parent], id] : [id])
-                    },
-                    rootId: (!parent ? id : state.rootId)
-                }
-            case commonLanguage.events.Set:
-                // Remove any existing children of this object (currently this does not support nesting)
-                const children = state.children[parent] as any[]
-                const newObjects = !children ? state.objects : Object.keys(state.objects).reduce((newObjects, id) => {
-                    if (children) {
-                        if (children.find(childId => childId === id)) {
-                            return newObjects;
-                        }
-                    }
+                {
+                    const { id, parent, payload } = message;
 
                     return {
-                        ...newObjects,
-                        [id]: state.objects[id]
+                        ...state,
+                        objects: {
+                            ...state.objects,
+                            [id]: payload
+                        },
+                        children: {
+                            [parent]: (state.children[parent] ? [...state.children[parent], id] : [id])
+                        },
+                        rootId: (!parent ? id : state.rootId)
                     }
-                }, {})
-
-                return {
-                    ...state,
-                    objects: {
-                        ...newObjects,
-                        [id]: actionPayload
-                    },
-                    children: {
-                        [parent]: [id]
-                    },
-                    rootId: (!parent ? id : state.rootId)
                 }
-            case commonLanguage.events.Removed:
-                return {
-                    ...state,
-                    objects: {
-                        ...state.objects,
-                        [id]: actionPayload
-                    },
-                    children: {
-                        [parent]: (state.children[parent] ? [...state.children[parent], id] : [id])
-                    },
-                    rootId: (!parent ? id : state.rootId)
+
+            case commonLanguage.events.Clear: //@todo Will this become .Remove once conditions are added?
+                {
+                    const { id } = message;
+
+                    // Remove any existing children of this object (currently this does not support nesting)
+                    const children = state.children[id] as any[]
+                    const newObjects = !children ? state.objects : Object.keys(state.objects).reduce((newObjects, id) => {
+                        if (children) {
+                            if (children.find(childId => childId === id)) {
+                                return newObjects;
+                            }
+                        }
+
+                        return {
+                            ...newObjects,
+                            [id]: state.objects[id]
+                        }
+                    }, {})
+
+                    return {
+                        ...state,
+                        objects: newObjects,
+                        children: {
+                            [id]: []
+                        },
+                    }
                 }
             case commonLanguage.events.Reduced:
-                return {
-                    ...state,
-                    objects: {
-                        ...state.objects,
-                        [id]: {
-                            ...state.objects[id],
-                            ...actionPayload
+                {
+                    const { id, payload } = message;
+
+                    return {
+                        ...state,
+                        objects: {
+                            ...state.objects,
+                            [id]: {
+                                ...state.objects[id],
+                                ...payload
+                            }
                         }
                     }
                 }
@@ -104,10 +101,14 @@ const commonLanguage = {
     },
 
     events: {
+        // All public state socket messages will contain this type (The payload will be array of events below)
+        Updated: 'UPDATED',
+
         // Add a set of children to an object
         Pushed: 'PUSHED',
-        // Override all children on object (Remove previous ones too)
-        Set: 'SET',
+        // Remove all children on object (Remove previous ones too)
+        Clear: 'CLEAR',
+
         Removed: 'REMOVED',
         Reduced: 'REDUCED',
 
