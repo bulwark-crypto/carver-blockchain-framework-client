@@ -19,6 +19,45 @@ const reducer: Reducer = (state, event) => {
                     },
                     rootId: (!parent ? id : state.rootId)
                 }
+            case commonLanguage.events.Set:
+                // Remove any existing children of this object (currently this does not support nesting)
+                const children = state.children[parent] as any[]
+                const newObjects = !children ? state.objects : Object.keys(state.objects).reduce((newObjects, id) => {
+                    if (children) {
+                        if (children.find(childId => childId === id)) {
+                            return newObjects;
+                        }
+                    }
+
+                    return {
+                        ...newObjects,
+                        [id]: state.objects[id]
+                    }
+                }, {})
+
+                return {
+                    ...state,
+                    objects: {
+                        ...newObjects,
+                        [id]: actionPayload
+                    },
+                    children: {
+                        [parent]: [id]
+                    },
+                    rootId: (!parent ? id : state.rootId)
+                }
+            case commonLanguage.events.Removed:
+                return {
+                    ...state,
+                    objects: {
+                        ...state.objects,
+                        [id]: actionPayload
+                    },
+                    children: {
+                        [parent]: (state.children[parent] ? [...state.children[parent], id] : [id])
+                    },
+                    rootId: (!parent ? id : state.rootId)
+                }
             case commonLanguage.events.Reduced:
                 return {
                     ...state,
@@ -65,8 +104,14 @@ const commonLanguage = {
     },
 
     events: {
+        // Add a set of children to an object
         Pushed: 'PUSHED',
-        Reduced: 'REDUCED'
+        // Override all children on object (Remove previous ones too)
+        Set: 'SET',
+        Removed: 'REMOVED',
+        Reduced: 'REDUCED',
+
+
     }
 }
 const initialState = {
