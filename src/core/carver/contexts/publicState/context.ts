@@ -15,7 +15,7 @@ const reducer: Reducer = (state, event) => {
                         ...state,
                         objects: {
                             ...state.objects,
-                            [id]: payload
+                            [id]: { ...payload, id } // The object will contain it's own id
                         },
                         children: {
                             [parent]: (state.children[parent] ? [...state.children[parent], id] : [id])

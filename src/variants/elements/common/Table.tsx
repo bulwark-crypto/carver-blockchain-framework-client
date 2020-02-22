@@ -31,18 +31,14 @@ const VariantCommonTable: React.FC<Props> = React.memo(({ object, options }) => 
     const { socket } = useContext(SocketContext)
     const { emit } = useSocket(socket);
 
-    console.log('*** rerender')
-
     const widget = object;
+    const { id, rows } = widget;
 
     const { columns } = options;
-
-    const { id, rows } = widget;
 
     if (!rows) {
         return <Box>Loading...</Box>
     }
-
 
     const onChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, page: number) => {
         emit(carverUserCommonLanguage.commands.Widgets.Command, {
