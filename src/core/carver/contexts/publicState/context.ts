@@ -26,15 +26,34 @@ const reducer: Reducer = (state, event) => {
 
             case commonLanguage.events.Clear: //@todo Will this become .Remove once conditions are added?
                 {
-                    const { id } = message;
+                    const { id, payload: idsToRemove } = message;
 
                     // Remove any existing children of this object (currently this does not support nesting)
                     const children = state.children[id] as any[]
+
+                    const objectIdsToremove = [] as string[];
+
+                    const newChildren = (!!children ? children : []).reduce((children, id) => {
+                        // Remove all children if ids are not specified
+                        if (!idsToRemove) {
+                            objectIdsToremove.push(id);
+                            return children;
+                        }
+
+                        if (idsToRemove.includes(id)) {
+                            objectIdsToremove.push(id);
+                            return children;
+                        }
+
+                        return [
+                            ...children,
+                            id
+                        ]
+                    }, []);
+
                     const newObjects = !children ? state.objects : Object.keys(state.objects).reduce((newObjects, id) => {
-                        if (children) {
-                            if (children.find(childId => childId === id)) {
-                                return newObjects;
-                            }
+                        if (objectIdsToremove.includes(id)) {
+                            return newObjects;
                         }
 
                         return {
@@ -47,7 +66,7 @@ const reducer: Reducer = (state, event) => {
                         ...state,
                         objects: newObjects,
                         children: {
-                            [id]: []
+                            [id]: newChildren
                         },
                     }
                 }
