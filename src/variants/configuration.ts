@@ -1,6 +1,7 @@
 
 import WidgetsContainerElement from './elements/WidgetsContainer'
 import BlocksElement from './elements/Blocks'
+import TxsElement from './elements/Txs'
 
 export interface VariantProps {
     object: any;
@@ -24,8 +25,16 @@ const variantConfigurations = {
 
     blocks: {
         title: 'Blocks',
+        description: 'List of most recent blockchain blocks.',
 
         element: BlocksElement
+    } as Configuration,
+
+    txs: {
+        title: 'Transactions',
+        description: 'List of most recent blockchain transactions. Can specify additional filter for txs of a specific block.',
+
+        element: TxsElement
     } as Configuration,
 }
 
