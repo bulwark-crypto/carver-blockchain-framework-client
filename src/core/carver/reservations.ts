@@ -61,10 +61,18 @@ const initReservationService = ({ loggerDispatch, carverUserDispatch }: Params) 
 
     const getNewReservation = async () => {
         addLog('Reserving socket connection...');
+
+        // Private key will allows client to identify themselves uniquely. dispatching commands will require this private key
+        // You can tachnically spectate with public key and command with private key
+        const privateKey = '@todo';
+
         const api = axios.create({
             baseURL: config.reservations.endpoint,
             timeout: 1000,
-            headers: { 'X-Carver-Framework-Version': config.version }
+            headers: {
+                'authorization': `Basic ${btoa(privateKey)}`,
+                'x-carver-framework-version': config.version
+            }
         });
 
         const reservationRequest = await api.post('/users/login')
